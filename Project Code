@@ -1,0 +1,174 @@
+import pyttsx3
+import speech_recognition as sr
+import webbrowser
+import datetime
+import pyjokes
+import os
+import pywhatkit as pyw
+import cv2
+import pyautogui
+from win32api import GetSystemMetrics
+import numpy as np
+
+
+
+def sptext():
+    recognizer = sr.Recognizer()
+    with sr.Microphone() as source:
+        print("Listening...")
+        recognizer.adjust_for_ambient_noise(source)
+        audio = recognizer.listen(source)
+        try:
+            print("recognizing...")
+            data = recognizer.recognize_google(audio)
+            print(data)
+            return data
+        except sr.UnknownValueError:
+            print("Not Understanding")
+
+
+def speechtx(x):
+    engine = pyttsx3.init()
+    voices = engine.getProperty("voices")
+    engine.setProperty("voice", voices[1].id)
+    rate = engine.getProperty("rate")
+    engine.setProperty("rate", 150)
+    engine.say(x)
+    engine.runAndWait()
+
+
+from tkinter import *
+
+
+def shut():
+    def restart():
+        os.system("shutdown /r /t 1")
+
+    def restart_time():
+        os.system("shutdown /r /t 20")
+
+    def logout():
+        os.system("shutdown -l")
+
+    def shutdown():
+        os.system("shutdown /s /t 1")
+
+    st = Tk()
+    st.title("ShutDown App")
+    st.geometry("500x500")
+    st.config(bg="Blue")
+
+    r_button = Button(st, text="Restart", font=("Time New Roman", 30, "bold"), relief=RAISED, cursor="plus",
+                      command=restart)
+    r_button.place(x=150, y=60, height=50, width=200)
+
+    r_button = Button(st, text="Restart Time", font=("Time New Roman", 20, "bold"), relief=RAISED, cursor="plus",
+                      command=restart_time)
+    r_button.place(x=150, y=170, height=50, width=200)
+
+    lg_button = Button(st, text="Log-Out", font=("Time New Roman", 20, "bold"), relief=RAISED, cursor="plus",
+                       command=logout)
+    lg_button.place(x=150, y=270, height=50, width=200)
+
+    st_button = Button(st, text="Shut Down", font=("Time New Roman", 20, "bold"), relief=RAISED, cursor="plus",
+                       command=shutdown)
+    st_button.place(x=150, y=370, height=50, width=200)
+    st.mainloop()
+
+
+def record():
+    import time
+
+    width = GetSystemMetrics(0)
+    height = GetSystemMetrics(1)
+
+    dim = (width, height)
+
+    f = cv2.VideoWriter_fourcc(*"XVID")
+
+    output = cv2.VideoWriter("tests3.mp4", f, 30.0, dim)
+
+
+    now_start_time = time.time()
+
+    dur = 10 + 4
+
+    end_time = now_start_time + dur
+
+    while True:
+        image = pyautogui.screenshot()
+        frame_1 = np.array(image)
+
+
+        output.write(frame_1)
+        c_time = time.time()
+
+        if c_time > end_time:
+            break
+
+    output.release()
+    print("END")
+
+
+if __name__ == "__main__":
+
+    while True:
+        data1 = sptext().lower()
+
+        if "your name" in data1:
+            name = "My name is April"
+            print(name)
+            speechtx(name)
+
+        elif "old are you" in data1:
+            age = "I am two years old"
+            print(age)
+            speechtx(age)
+
+        elif "time" in data1:
+            time = datetime.datetime.now().strftime("It is %I:%M%p")
+            print(time)
+            speechtx(time)
+
+        elif "youtube" in data1:
+            webbrowser.open("https://www.youtube.com/")
+
+        elif "graphic era" in data1:
+            webbrowser.open("https://geu.ac.in/")
+
+        elif "joke" in data1:
+            joke_1 = pyjokes.get_joke(language="en", category="neutral")
+            print(joke_1)
+            speechtx(joke_1)
+
+        elif "play movie" in data1:
+            add = "D:\certificates"
+            listvideo = os.listdir(add)
+            os.startfile(os.path.join(add, listvideo[6]))
+
+        elif "shutdown" in data1:
+            speechtx("these are options of shutting down ")
+            shut()
+
+        elif "record" in data1:
+            speechtx("screen recording will begin soon")
+            record()
+
+        elif "exit" in data1:
+            speechtx("thank you sir, we will meet again")
+            break
+
+        elif "actor" in data1:
+            speechtx("Shah Rukh Khan")
+
+        elif "screenshot" in data1:
+            ss=pyautogui.screenshot()
+            ss.save("ss.png")
+
+        elif "message" in data1:
+            print("listening msg")
+            data2=sptext().lower()
+            pyw.sendwhatmsg('+917618113648',data2,7,39)
+
+        else:
+            speechtx("voice is not recognized")
